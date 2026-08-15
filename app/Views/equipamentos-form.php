@@ -4,13 +4,14 @@
 /** @var array<string, string> $errors */
 /** @var array<string, string> $old */
 /** @var string $basePath */
+/** @var int|null $equipmentId */
 
 $value = static fn (string $field): string => htmlspecialchars($old[$field] ?? '');
 $invalidClass = static fn (string $field): string => isset($errors[$field]) ? ' is-invalid' : '';
 ?>
 <div class="mb-4">
-    <h1 class="mb-1">Novo equipamento</h1>
-    <p class="text-muted mb-0">Preencha os dados para adicionar um ativo ao inventário.</p>
+    <h1 class="mb-1"><?= $equipmentId === null ? 'Novo equipamento' : 'Editar equipamento' ?></h1>
+    <p class="text-muted mb-0">Preencha os dados do ativo no inventário.</p>
 </div>
 
 <?php if ($errors !== []): ?>
@@ -21,7 +22,10 @@ $invalidClass = static fn (string $field): string => isset($errors[$field]) ? ' 
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
-        <form action="<?= htmlspecialchars($basePath) ?>/home/equipamentos" method="post" novalidate>
+        <form action="<?= htmlspecialchars($basePath) ?>/home/equipamentos<?= $equipmentId === null ? '' : '/atualizar' ?>" method="post" novalidate>
+            <?php if ($equipmentId !== null): ?>
+                <input type="hidden" name="id" value="<?= $equipmentId ?>">
+            <?php endif; ?>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="nome" class="form-label">Nome do equipamento *</label>
@@ -122,14 +126,25 @@ $invalidClass = static fn (string $field): string => isset($errors[$field]) ? ' 
                     <?php endif; ?>
                 </div>
 
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Status *</label>
+                    <select class="form-select<?= $invalidClass('status') ?>" id="status" name="status" required>
+                        <?php foreach (['disponivel' => 'Disponível', 'em_uso' => 'Em uso', 'manutencao' => 'Manutenção', 'baixado' => 'Baixado'] as $statusValue => $statusLabel): ?>
+                            <option value="<?= $statusValue ?>" <?= ($old['status'] ?? 'disponivel') === $statusValue ? 'selected' : '' ?>><?= $statusLabel ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (isset($errors['status'])): ?><div class="invalid-feedback"><?= htmlspecialchars($errors['status']) ?></div><?php endif; ?>
+                </div>
+
                 <div class="col-12">
                     <label for="observacoes" class="form-label">Observações</label>
                     <textarea
-                        class="form-control"
+                        class="form-control<?= $invalidClass('observacoes') ?>"
                         id="observacoes"
                         name="observacoes"
-                        rows="3"
+                        rows="3" maxlength="5000"
                     ><?= $value('observacoes') ?></textarea>
+                    <?php if (isset($errors['observacoes'])): ?><div class="invalid-feedback"><?= htmlspecialchars($errors['observacoes']) ?></div><?php endif; ?>
                 </div>
             </div>
 

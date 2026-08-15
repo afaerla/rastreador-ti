@@ -1,7 +1,8 @@
 <?php
 
 /** @var array<int, array<string, mixed>> $equipamentos */
-/** @var bool $cadastroRealizado */
+/** @var string|null $mensagem */
+/** @var bool $mensagemErro */
 /** @var string $basePath */
 
 $statusLabels = [
@@ -22,9 +23,9 @@ $statusLabels = [
     </a>
 </div>
 
-<?php if ($cadastroRealizado): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Equipamento cadastrado com sucesso.
+<?php if ($mensagem !== null): ?>
+    <div class="alert alert-<?= $mensagemErro ? 'danger' : 'success' ?> alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($mensagem) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
     </div>
 <?php endif; ?>
@@ -41,12 +42,13 @@ $statusLabels = [
                         <th>Número de série</th>
                         <th>Status</th>
                         <th>Data de aquisição</th>
+                        <th class="text-end pe-3">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($equipamentos === []): ?>
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-5">
+                            <td colspan="7" class="text-center text-muted py-5">
                                 Nenhum equipamento cadastrado.
                             </td>
                         </tr>
@@ -64,6 +66,15 @@ $statusLabels = [
                                     <?= htmlspecialchars($equipamento['marca'] ?? '-') ?>
                                     /
                                     <?= htmlspecialchars($equipamento['modelo'] ?? '-') ?>
+                                </td>
+                                <td class="text-end pe-3 text-nowrap">
+                                    <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($basePath) ?>/home/equipamentos/editar?id=<?= (int) $equipamento['id'] ?>" aria-label="Editar <?= htmlspecialchars($equipamento['nome']) ?>">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <form class="d-inline" action="<?= htmlspecialchars($basePath) ?>/home/equipamentos/excluir" method="post" onsubmit="return confirm('Deseja realmente excluir este equipamento?');">
+                                        <input type="hidden" name="id" value="<?= (int) $equipamento['id'] ?>">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Excluir</button>
+                                    </form>
                                 </td>
                                 <td><?= htmlspecialchars($equipamento['categoria_nome']) ?></td>
                                 <td><code><?= htmlspecialchars($equipamento['numero_serie']) ?></code></td>

@@ -15,6 +15,7 @@ class Router
             'home' => [HomeController::class, 'index'],
             'home/equipamentos' => [EquipamentosController::class, 'index'],
             'home/equipamentos/novo' => [EquipamentosController::class, 'create'],
+            'home/equipamentos/editar' => [EquipamentosController::class, 'edit'],
             'home/categorias' => [HomeController::class, 'categorias'],
             'home/emprestimos' => [HomeController::class, 'emprestimos'],
             'home/manutencoes' => [HomeController::class, 'manutencoes'],
@@ -22,6 +23,8 @@ class Router
         ],
         'POST' => [
             'home/equipamentos' => [EquipamentosController::class, 'store'],
+            'home/equipamentos/atualizar' => [EquipamentosController::class, 'update'],
+            'home/equipamentos/excluir' => [EquipamentosController::class, 'destroy'],
         ],
     ];
 

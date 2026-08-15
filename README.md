@@ -13,7 +13,7 @@ O Rastreio TI busca centralizar o inventário e o ciclo de vida de equipamentos 
 - **Administradores e técnicos de TI:** responsáveis pelo inventário e pelas movimentações dos ativos.
 - **Colaboradores:** usuários que poderão consultar os equipamentos sob sua responsabilidade.
 
-## Estado atual — Entrega Parcial 3
+## Estado atual — Entrega Parcial 4
 
 Funcionalidades implementadas e testadas:
 
@@ -24,15 +24,18 @@ Funcionalidades implementadas e testadas:
 - conexão com MySQL/MariaDB por PDO;
 - cadastro de equipamentos (Create);
 - listagem de equipamentos com suas categorias (Read);
+- edição de equipamentos e de seu status (Update);
+- exclusão de equipamentos com confirmação (Delete);
 - validação dos dados do cadastro;
+- validação dos dados da edição;
 - bloqueio de número de série duplicado;
+- mensagens de sucesso e erro nas operações;
 - consultas preparadas;
 - dashboard com indicadores reais do inventário;
 - tratamento de erros HTTP 404, 405, 422 e 500.
 
 ### Funcionalidades futuras
 
-- atualização e exclusão de equipamentos;
 - cadastro e gerenciamento de categorias;
 - cadastro e gerenciamento de usuários;
 - registro de empréstimos e devoluções;
@@ -95,7 +98,10 @@ O projeto foi desenvolvido e testado localmente com XAMPP, PHP 8.2 e MariaDB.
 | GET | `/home` | Dashboard com indicadores reais |
 | GET | `/home/equipamentos` | Listagem de equipamentos |
 | GET | `/home/equipamentos/novo` | Formulário de cadastro |
+| GET | `/home/equipamentos/editar?id={id}` | Formulário de edição |
 | POST | `/home/equipamentos` | Processamento do cadastro |
+| POST | `/home/equipamentos/atualizar` | Processamento da edição |
+| POST | `/home/equipamentos/excluir` | Exclusão de equipamento |
 | GET | `/home/emprestimos` | Tela informativa do módulo futuro |
 | GET | `/home/categorias` | Tela inicial de categorias |
 | GET | `/home/manutencoes` | Tela inicial de manutenções |
@@ -146,7 +152,7 @@ O script atual cria as tabelas:
 
 Nesta entrega, a aplicação utiliza diretamente as tabelas `equipamentos` e `categorias`. As demais fazem parte da modelagem preparada para as próximas etapas.
 
-## Demonstração da Entrega Parcial 3
+## Demonstração da Entrega Parcial 4
 
 Fluxo sugerido para demonstrar o sistema:
 
@@ -156,7 +162,9 @@ Fluxo sugerido para demonstrar o sistema:
 4. preencher e salvar um cadastro;
 5. confirmar a mensagem de sucesso e o item na listagem;
 6. atualizar o dashboard e confirmar a alteração dos indicadores;
-7. tentar repetir o número de série para demonstrar a validação.
+7. editar o item e confirmar a mensagem e os dados atualizados;
+8. tentar repetir o número de série para demonstrar a validação;
+9. excluir o item e confirmar sua remoção da listagem.
 
 ## Observação de segurança
 

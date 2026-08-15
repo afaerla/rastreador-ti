@@ -57,7 +57,40 @@ class EquipamentosRepository
 
     public function update(EquipamentosModel $model): void
     {
-        // Implementação prevista para a etapa de atualização do CRUD.
+        $statement = $this->connection->prepare(
+            'UPDATE equipamentos SET nome = :nome, marca = :marca, modelo = :modelo,
+             numero_serie = :numero_serie, categoria_id = :categoria_id, status = :status,
+             data_aquisicao = :data_aquisicao, observacoes = :observacoes WHERE id = :id'
+        );
+        $statement->execute([
+            'id' => $model->id,
+            'nome' => $model->nome,
+            'marca' => $model->marca,
+            'modelo' => $model->modelo,
+            'numero_serie' => $model->numeroSerie,
+            'categoria_id' => $model->categoriaId,
+            'status' => $model->status,
+            'data_aquisicao' => $model->dataAquisicao,
+            'observacoes' => $model->observacoes,
+        ]);
+    }
+
+    /** @return array<string, mixed>|null */
+    public function find(int $id): ?array
+    {
+        $statement = $this->connection->prepare('SELECT * FROM equipamentos WHERE id = :id');
+        $statement->execute(['id' => $id]);
+        $equipment = $statement->fetch();
+
+        return $equipment === false ? null : $equipment;
+    }
+
+    public function delete(int $id): bool
+    {
+        $statement = $this->connection->prepare('DELETE FROM equipamentos WHERE id = :id');
+        $statement->execute(['id' => $id]);
+
+        return $statement->rowCount() > 0;
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -99,12 +132,18 @@ class EquipamentosRepository
         return $statement->fetchAll();
     }
 
-    public function serialNumberExists(string $serialNumber): bool
+    public function serialNumberExists(string $serialNumber, ?int $ignoredId = null): bool
     {
         $statement = $this->connection->prepare(
-            'SELECT 1 FROM equipamentos WHERE numero_serie = :numero_serie LIMIT 1'
+            'SELECT 1 FROM equipamentos
+             WHERE numero_serie = :numero_serie
+               AND (:ignored_id_null IS NULL OR id <> :ignored_id_value) LIMIT 1'
         );
-        $statement->execute(['numero_serie' => $serialNumber]);
+        $statement->execute([
+            'numero_serie' => $serialNumber,
+            'ignored_id_null' => $ignoredId,
+            'ignored_id_value' => $ignoredId ?? 0,
+        ]);
 
         return $statement->fetchColumn() !== false;
     }
