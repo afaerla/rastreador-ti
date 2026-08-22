@@ -6,12 +6,14 @@ namespace Core;
 
 use App\Controllers\HomeController;
 use App\Controllers\EquipamentosController;
+use App\Controllers\LoginController;
 
 class Router
 {
     /** @var array<string, array<string, array{class-string, string}>> */
     private const ROUTES = [
         'GET' => [
+            'login' => [LoginController::class, 'index'],
             'home' => [HomeController::class, 'index'],
             'home/equipamentos' => [EquipamentosController::class, 'index'],
             'home/equipamentos/novo' => [EquipamentosController::class, 'create'],
@@ -25,13 +27,14 @@ class Router
             'home/equipamentos' => [EquipamentosController::class, 'store'],
             'home/equipamentos/atualizar' => [EquipamentosController::class, 'update'],
             'home/equipamentos/excluir' => [EquipamentosController::class, 'destroy'],
+            'login/autenticar' => [LoginController::class, 'autenticar'],
         ],
     ];
 
     public function run(): void
     {
-        $route = trim((string) ($_GET['rota'] ?? 'home'), '/');
-        $route = $route === '' ? 'home' : $route;
+        $route = trim((string) ($_GET['rota'] ?? 'login'), '/');
+        $route = $route === '' ? 'login' : $route;
         $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 
         if (!isset(self::ROUTES[$method][$route])) {

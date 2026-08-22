@@ -22,6 +22,15 @@ abstract class Controller
         require $viewsDirectory . '/layouts/main.php';
     }
 
+    public function viewAuth(string $view, array $data = [])
+    {
+        extract($data);
+
+        $viewFile = __DIR__ . "/../app/Views/" . $view . ".php";
+
+        include $viewFile;
+    }
+
     protected function redirect(string $route): never
     {
         $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
