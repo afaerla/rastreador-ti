@@ -31,6 +31,8 @@ Funcionalidades implementadas e testadas:
 - bloqueio de número de série duplicado;
 - mensagens de sucesso e erro nas operações;
 - consultas preparadas;
+- autenticação por e-mail e senha;
+- sessões, proteção das rotas internas e logout;
 - dashboard com indicadores reais do inventário;
 - tratamento de erros HTTP 404, 405, 422 e 500.
 
@@ -40,7 +42,6 @@ Funcionalidades implementadas e testadas:
 - cadastro e gerenciamento de usuários;
 - registro de empréstimos e devoluções;
 - histórico de manutenções;
-- login, sessões e controle de acesso;
 - termos de responsabilidade e relatórios.
 
 O link de empréstimos permanece visível como indicação de um módulo planejado, mas essa funcionalidade ainda não faz parte da implementação atual.
@@ -86,7 +87,7 @@ O projeto foi desenvolvido e testado localmente com XAMPP, PHP 8.2 e MariaDB.
 6. Acesse a aplicação. Considerando a pasta `rastreio-ti` dentro do `htdocs` do XAMPP:
 
    ```text
-   http://localhost/rastreio-ti/public/home
+   http://localhost/rastreio-ti/public/login
    ```
 
 > As credenciais do banco devem ser adaptadas ao ambiente local. A configuração padrão não deve ser usada em produção.
@@ -95,6 +96,9 @@ O projeto foi desenvolvido e testado localmente com XAMPP, PHP 8.2 e MariaDB.
 
 | Método | Rota | Descrição |
 |---|---|---|
+| GET | `/login` | Formulário de autenticação |
+| POST | `/login/autenticar` | Processamento da autenticação |
+| POST | `/logout` | Encerramento da sessão |
 | GET | `/home` | Dashboard com indicadores reais |
 | GET | `/home/equipamentos` | Listagem de equipamentos |
 | GET | `/home/equipamentos/novo` | Formulário de cadastro |

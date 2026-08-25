@@ -67,6 +67,14 @@ $statusLabels = [
                                     /
                                     <?= htmlspecialchars($equipamento['modelo'] ?? '-') ?>
                                 </td>
+                                <td><?= htmlspecialchars($equipamento['categoria_nome']) ?></td>
+                                <td><code><?= htmlspecialchars($equipamento['numero_serie']) ?></code></td>
+                                <td><span class="badge <?= $statusClass ?>"><?= $statusText ?></span></td>
+                                <td>
+                                    <?= $equipamento['data_aquisicao'] !== null
+                                        ? htmlspecialchars(date('d/m/Y', strtotime($equipamento['data_aquisicao'])))
+                                        : '-' ?>
+                                </td>
                                 <td class="text-end pe-3 text-nowrap">
                                     <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($basePath) ?>/home/equipamentos/editar?id=<?= (int) $equipamento['id'] ?>" aria-label="Editar <?= htmlspecialchars($equipamento['nome']) ?>">
                                         <i class="bi bi-pencil"></i> Editar
@@ -75,14 +83,6 @@ $statusLabels = [
                                         <input type="hidden" name="id" value="<?= (int) $equipamento['id'] ?>">
                                         <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Excluir</button>
                                     </form>
-                                </td>
-                                <td><?= htmlspecialchars($equipamento['categoria_nome']) ?></td>
-                                <td><code><?= htmlspecialchars($equipamento['numero_serie']) ?></code></td>
-                                <td><span class="badge <?= $statusClass ?>"><?= $statusText ?></span></td>
-                                <td>
-                                    <?= $equipamento['data_aquisicao'] !== null
-                                        ? htmlspecialchars(date('d/m/Y', strtotime($equipamento['data_aquisicao'])))
-                                        : '-' ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

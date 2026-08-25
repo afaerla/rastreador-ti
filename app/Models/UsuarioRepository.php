@@ -7,28 +7,33 @@ namespace App\Models;
 use Config\Database;
 use PDO;
 
-class UsuarioRepository {
+class UsuarioRepository
+{
     private PDO $connection;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->connection = Database::getInstance();
     }
 
-    public function autenticar($usuario, $senha) {    
-        $sql = "SELECT * FROM usuarios WHERE nome = :usuario";
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute([
-            'usuario' => $usuario
-        ]);
+    /** @return array{id: int, nome: string, email: string, perfil: string}|null */
+    public function autenticar(string $email, string $senha): ?array
+    {
+        $statement = $this->connection->prepare(
+            'SELECT id, nome, email, senha_hash, perfil
+             FROM usuarios
+             WHERE email = :email AND ativo = 1
+             LIMIT 1'
+        );
+        $statement->execute(['email' => $email]);
+        $usuario = $statement->fetch();
 
-        $usuarioEncontrado = $stmt->fetch();
-       
-
-        if ($usuarioEncontrado && password_verify($senha, $usuarioEncontrado['senha_hash'])) {
-            $_SESSION['usuario'] = $usuarioEncontrado['id'];
-            return true;
+        if ($usuario === false || !password_verify($senha, $usuario['senha_hash'])) {
+            return null;
         }
 
-        return false;
+        unset($usuario['senha_hash']);
+
+        return $usuario;
     }
 }

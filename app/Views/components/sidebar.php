@@ -33,4 +33,13 @@ $url = static fn(string $route): string => htmlspecialchars($basePath . '/' . $r
             </a>
         </li>
     </ul>
+
+    <div class="mt-auto text-center px-3">
+        <p class="text-white mb-2"><?= htmlspecialchars((string) ($_SESSION['usuario_nome'] ?? '')) ?></p>
+        <form action="<?= $url('logout') ?>" method="post">
+            <button class="btn btn-outline-light" type="submit">
+                <i class="bi bi-box-arrow-right"></i> Sair
+            </button>
+        </form>
+    </div>
 </nav>

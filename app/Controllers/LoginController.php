@@ -11,24 +11,43 @@ class LoginController extends Controller
 {
     public function index(): void
     {
-        $this->viewAuth('login');
+        if (isset($_SESSION['usuario_id'])) {
+            $this->redirect('home');
+        }
 
+        $this->viewAuth('login');
     }
 
-    public function autenticar(){
-        $usuario = $_POST['nome'] ?? "";
-        $senha = $_POST['senha'] ?? "";
-        $usuarioModel = new UsuarioModel();
-        $usuarioEncontrado = $usuarioModel->autenticar($usuario, $senha);
+    public function autenticar(): void
+    {
+        $email = trim((string) ($_POST['email'] ?? ''));
+        $senha = (string) ($_POST['senha'] ?? '');
+        $usuario = (new UsuarioModel())->autenticar($email, $senha);
 
-        if ($usuarioEncontrado) {
-            header('Location: /rastreador-ti/public/home');
-            exit();
+        if ($usuario !== null) {
+            session_regenerate_id(true);
+            $_SESSION['usuario_id'] = (int) $usuario['id'];
+            $_SESSION['usuario_nome'] = $usuario['nome'];
+            $_SESSION['usuario_perfil'] = $usuario['perfil'];
+            $this->redirect('home');
         }
 
         $this->viewAuth('login', [
-            'erro' => 'Usuário ou senha inválido.'
+            'erro' => 'E-mail ou senha inválidos.',
+            'email' => $email,
         ]);
     }
-    
+
+    public function logout(): void
+    {
+        $_SESSION = [];
+
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        }
+
+        session_destroy();
+        $this->redirect('login');
+    }
 }

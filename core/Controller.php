@@ -22,13 +22,17 @@ abstract class Controller
         require $viewsDirectory . '/layouts/main.php';
     }
 
-    public function viewAuth(string $view, array $data = [])
+    /** @param array<string, mixed> $data */
+    protected function viewAuth(string $viewName, array $data = []): void
     {
-        extract($data);
+        $view = dirname(__DIR__) . '/app/Views/' . $viewName . '.php';
 
-        $viewFile = __DIR__ . "/../app/Views/" . $view . ".php";
+        if (!is_file($view)) {
+            throw new RuntimeException('View não encontrada.');
+        }
 
-        include $viewFile;
+        extract($data, EXTR_SKIP);
+        require $view;
     }
 
     protected function redirect(string $route): never

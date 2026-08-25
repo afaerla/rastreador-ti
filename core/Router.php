@@ -10,6 +10,8 @@ use App\Controllers\LoginController;
 
 class Router
 {
+    private const PUBLIC_ROUTES = ['login', 'login/autenticar'];
+
     /** @var array<string, array<string, array{class-string, string}>> */
     private const ROUTES = [
         'GET' => [
@@ -28,6 +30,7 @@ class Router
             'home/equipamentos/atualizar' => [EquipamentosController::class, 'update'],
             'home/equipamentos/excluir' => [EquipamentosController::class, 'destroy'],
             'login/autenticar' => [LoginController::class, 'autenticar'],
+            'logout' => [LoginController::class, 'logout'],
         ],
     ];
 
@@ -36,6 +39,11 @@ class Router
         $route = trim((string) ($_GET['rota'] ?? 'login'), '/');
         $route = $route === '' ? 'login' : $route;
         $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+        if (!in_array($route, self::PUBLIC_ROUTES, true) && !isset($_SESSION['usuario_id'])) {
+            $this->redirectToLogin();
+            return;
+        }
 
         if (!isset(self::ROUTES[$method][$route])) {
             if ($this->routeExistsForAnotherMethod($route)) {
@@ -50,6 +58,12 @@ class Router
         [$controllerClass, $action] = self::ROUTES[$method][$route];
         $controller = new $controllerClass();
         $controller->{$action}();
+    }
+
+    private function redirectToLogin(): void
+    {
+        $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+        header('Location: ' . $basePath . '/login');
     }
 
     private function routeExistsForAnotherMethod(string $route): bool
