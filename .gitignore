@@ -11,8 +11,13 @@
 .DS_Store
 Thumbs.db
 ehthumbs.db
+desktop.ini
 
 # Futuros uploads e dependências (se a gente for usar o composer lá pra frente)
 /vendor/
 /public/uploads/*
 !.gitkeep
+
+# Configuração local e arquivos sensíveis
+config/database.php
+public/teste_conexao.php
