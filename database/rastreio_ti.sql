@@ -3,12 +3,6 @@
 -- Compatível com config/Database.php (host: localhost, db: rastreio_ti)
 -- =====================================================================
 
-CREATE DATABASE IF NOT EXISTS rastreio_ti
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
-
-USE rastreio_ti;
-
 -- ---------------------------------------------------------------------
 -- Tabela: usuarios
 -- Administradores/Técnicos de TI e Colaboradores
@@ -142,4 +136,4 @@ INSERT INTO categorias (nome, descricao) VALUES
 -- Usuário admin inicial - login: admin@rastreadorti.local | senha: admin123
 -- (hash já válido, gerado com bcrypt; troque a senha assim que possível)
 INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES
-    ('Administrador', 'admin@rastreadorti.local', '$2b$10$9/QyMnwk1jcJRkX2bDHz3O0j6bPVgkPRDuYNIjqxzywLTzOw8RO.2', 'admin');
+    ('Administrador', 'admin@rastreadorti.local', '$2b$10$hlGgc2mRCSsCxZJRcEGSaujHa4IEZAOklp26nc6bFhLD..uOF6IEC', 'admin');
