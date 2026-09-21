@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Models\UsuarioModel;
 use Core\Controller;
+use Core\Csrf;
 
 class LoginController extends Controller
 {
@@ -20,6 +21,8 @@ class LoginController extends Controller
 
     public function autenticar(): void
     {
+        Csrf::validar();
+
         $email = trim((string) ($_POST['email'] ?? ''));
         $senha = (string) ($_POST['senha'] ?? '');
         $usuario = (new UsuarioModel())->autenticar($email, $senha);
@@ -40,6 +43,8 @@ class LoginController extends Controller
 
     public function logout(): void
     {
+        Csrf::validar();
+
         $_SESSION = [];
 
         if (ini_get('session.use_cookies')) {
