@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Models\EquipamentosModel;
 use App\Models\EquipamentosRepository;
 use Core\Controller;
+use Core\Csrf;
 use DateTimeImmutable;
 use PDOException;
 
@@ -40,6 +41,8 @@ class EquipamentosController extends Controller
 
     public function store(): void
     {
+        Csrf::validar();
+
         $input = $this->input();
 
         $errors = $this->validate($input);
@@ -69,6 +72,8 @@ class EquipamentosController extends Controller
 
     public function update(): void
     {
+        Csrf::validar();
+
         $id = $this->validId($_POST['id'] ?? null);
         if ($id === null || $this->repository->find($id) === null) {
             $this->redirect('home/equipamentos?erro=nao-encontrado');
@@ -90,6 +95,8 @@ class EquipamentosController extends Controller
 
     public function destroy(): void
     {
+        Csrf::validar();
+
         $id = $this->validId($_POST['id'] ?? null);
         if ($id === null) {
             $this->redirect('home/equipamentos?erro=nao-encontrado');
