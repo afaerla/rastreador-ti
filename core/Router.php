@@ -12,6 +12,20 @@ class Router
 {
     private const PUBLIC_ROUTES = ['login', 'login/autenticar'];
 
+    /** @var array<string, array<int, string>> */
+    private const ADMIN_ONLY_ROUTES = [
+        'GET' => [
+            'home/equipamentos/novo',
+            'home/equipamentos/editar',
+            'home/usuarios',
+        ],
+        'POST' => [
+            'home/equipamentos',
+            'home/equipamentos/atualizar',
+            'home/equipamentos/excluir',
+        ],
+    ];
+
     /** @var array<string, array<string, array{class-string, string}>> */
     private const ROUTES = [
         'GET' => [
@@ -55,9 +69,24 @@ class Router
             return;
         }
 
+        if ($this->isAdminOnly($method, $route) && !$this->isAdmin()) {
+            $this->forbidden();
+            return;
+        }
+
         [$controllerClass, $action] = self::ROUTES[$method][$route];
         $controller = new $controllerClass();
         $controller->{$action}();
+    }
+
+    private function isAdminOnly(string $method, string $route): bool
+    {
+        return in_array($route, self::ADMIN_ONLY_ROUTES[$method] ?? [], true);
+    }
+
+    private function isAdmin(): bool
+    {
+        return ($_SESSION['usuario_perfil'] ?? '') === 'admin';
     }
 
     private function redirectToLogin(): void
@@ -89,5 +118,12 @@ class Router
         http_response_code(405);
         echo '<h1>Erro 405</h1>';
         echo '<p>Método não permitido para esta rota.</p>';
+    }
+
+    private function forbidden(): void
+    {
+        http_response_code(403);
+        echo '<h1>Erro 403</h1>';
+        echo '<p>Você não tem permissão para acessar esta página.</p>';
     }
 }
