@@ -1,5 +1,7 @@
 <?php
 
+use Core\Csrf;
+
 /** @var array<int, array{id: int, nome: string}> $categorias */
 /** @var array<string, string> $errors */
 /** @var array<string, string> $old */
@@ -8,6 +10,7 @@
 
 $value = static fn (string $field): string => htmlspecialchars($old[$field] ?? '');
 $invalidClass = static fn (string $field): string => isset($errors[$field]) ? ' is-invalid' : '';
+$csrfToken = Csrf::token();
 ?>
 <div class="mb-4">
     <h1 class="mb-1"><?= $equipmentId === null ? 'Novo equipamento' : 'Editar equipamento' ?></h1>
@@ -23,6 +26,7 @@ $invalidClass = static fn (string $field): string => isset($errors[$field]) ? ' 
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
         <form action="<?= htmlspecialchars($basePath) ?>/home/equipamentos<?= $equipmentId === null ? '' : '/atualizar' ?>" method="post" novalidate>
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrfToken) ?>">
             <?php if ($equipmentId !== null): ?>
                 <input type="hidden" name="id" value="<?= $equipmentId ?>">
             <?php endif; ?>
