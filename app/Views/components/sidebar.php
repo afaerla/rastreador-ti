@@ -1,6 +1,11 @@
 <?php
+
+use Core\Csrf;
+
 /** @var string $basePath */
 $url = static fn(string $route): string => htmlspecialchars($basePath . '/' . $route);
+$isAdmin = ($_SESSION['usuario_perfil'] ?? '') === 'admin';
+$csrfToken = Csrf::token();
 ?>
 <nav class="d-flex flex-column align-items-center py-4 bg-primary text-dark" style="width: 300px; min-height: 100vh;">
     <h4 class="text-white fs-2">Rastreador TI</h4>
@@ -27,16 +32,19 @@ $url = static fn(string $route): string => htmlspecialchars($basePath . '/' . $r
                 <i class="bi bi-tools"></i> Manutenções
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-white fs-4 rounded" href="<?= $url('home/usuarios') ?>">
-                <i class="bi bi-people"></i> Usuários
-            </a>
-        </li>
+        <?php if ($isAdmin): ?>
+            <li class="nav-item">
+                <a class="nav-link text-white fs-4 rounded" href="<?= $url('home/usuarios') ?>">
+                    <i class="bi bi-people"></i> Usuários
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 
     <div class="mt-auto text-center px-3">
         <p class="text-white mb-2"><?= htmlspecialchars((string) ($_SESSION['usuario_nome'] ?? '')) ?></p>
         <form action="<?= $url('logout') ?>" method="post">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrfToken) ?>">
             <button class="btn btn-outline-light" type="submit">
                 <i class="bi bi-box-arrow-right"></i> Sair
             </button>
