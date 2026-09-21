@@ -1,5 +1,7 @@
 <?php
 
+use Core\Csrf;
+
 /** @var array<int, array<string, mixed>> $equipamentos */
 /** @var string|null $mensagem */
 /** @var bool $mensagemErro */
@@ -11,6 +13,9 @@ $statusLabels = [
     'manutencao' => ['Manutenção', 'text-bg-warning'],
     'baixado' => ['Baixado', 'text-bg-danger'],
 ];
+
+$isAdmin = ($_SESSION['usuario_perfil'] ?? '') === 'admin';
+$csrfToken = Csrf::token();
 ?>
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -18,9 +23,11 @@ $statusLabels = [
         <p class="text-muted mb-0">Ativos cadastrados no inventário.</p>
     </div>
 
-    <a class="btn btn-success" href="<?= htmlspecialchars($basePath) ?>/home/equipamentos/novo">
-        <i class="bi bi-plus-lg"></i> Novo equipamento
-    </a>
+    <?php if ($isAdmin): ?>
+        <a class="btn btn-success" href="<?= htmlspecialchars($basePath) ?>/home/equipamentos/novo">
+            <i class="bi bi-plus-lg"></i> Novo equipamento
+        </a>
+    <?php endif; ?>
 </div>
 
 <?php if ($mensagem !== null): ?>
@@ -76,13 +83,18 @@ $statusLabels = [
                                         : '-' ?>
                                 </td>
                                 <td class="text-end pe-3 text-nowrap">
-                                    <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($basePath) ?>/home/equipamentos/editar?id=<?= (int) $equipamento['id'] ?>" aria-label="Editar <?= htmlspecialchars($equipamento['nome']) ?>">
-                                        <i class="bi bi-pencil"></i> Editar
-                                    </a>
-                                    <form class="d-inline" action="<?= htmlspecialchars($basePath) ?>/home/equipamentos/excluir" method="post" onsubmit="return confirm('Deseja realmente excluir este equipamento?');">
-                                        <input type="hidden" name="id" value="<?= (int) $equipamento['id'] ?>">
-                                        <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Excluir</button>
-                                    </form>
+                                    <?php if ($isAdmin): ?>
+                                        <a class="btn btn-sm btn-outline-primary" href="<?= htmlspecialchars($basePath) ?>/home/equipamentos/editar?id=<?= (int) $equipamento['id'] ?>" aria-label="Editar <?= htmlspecialchars($equipamento['nome']) ?>">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <form class="d-inline" action="<?= htmlspecialchars($basePath) ?>/home/equipamentos/excluir" method="post" onsubmit="return confirm('Deseja realmente excluir este equipamento?');">
+                                            <input type="hidden" name="id" value="<?= (int) $equipamento['id'] ?>">
+                                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrfToken) ?>">
+                                            <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Excluir</button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -1,6 +1,11 @@
 <?php
+
+use Core\Csrf;
+
 $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
 $emailValue = htmlspecialchars((string) ($email ?? ''));
+$csrfToken = Csrf::token();
+$sessaoExpirada = ($_GET['sessao'] ?? '') === 'expirada';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -26,6 +31,8 @@ $emailValue = htmlspecialchars((string) ($email ?? ''));
             </h3>
 
             <form action="<?= htmlspecialchars($basePath) ?>/login/autenticar" method="post">
+                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrfToken) ?>">
+
                 <div class="mb-3">
                     <label for="email" class="form-label">E-mail</label>
                     <input type="email" id="email" name="email" class="form-control" value="<?= $emailValue ?>" placeholder="Digite seu e-mail" autocomplete="username" required autofocus>
@@ -37,6 +44,12 @@ $emailValue = htmlspecialchars((string) ($email ?? ''));
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Entrar</button>
+
+                <?php if ($sessaoExpirada): ?>
+                    <div class="alert alert-warning mt-3 mb-0" role="alert">
+                        Sua sessão expirou por inatividade. Faça login novamente.
+                    </div>
+                <?php endif; ?>
 
                 <?php if (!empty($erro)): ?>
                     <div class="alert alert-danger mt-3 mb-0" role="alert">
